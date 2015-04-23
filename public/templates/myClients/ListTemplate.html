@@ -1,0 +1,12 @@
+<% saasDbs.forEach(function(company, index){ %>
+<tr data-index="<%= index %>" data-id="<%= company._id%>">
+    <!--<td class = "notForm"><input type="checkbox" value="<%=company._id%>" class="checkbox" /></td>-->
+    <td><%=startNumber + index + 1 %></td>
+    <td class="email"><%=(company.user) ? company.user : ''%></td>
+    <td><%=company._id%></td>
+    <td><%=(company.geo) ? company.geo.country : ''%></td>
+    <td><%=(company.geo) ? company.geo.city : ''%></td>
+    <td><%=(company.ip) ? company.ip : ''%></td>
+    <td><%=(company.registrationDate) ? company.registrationDate : ''%></td>
+</tr>
+<% }) %>
