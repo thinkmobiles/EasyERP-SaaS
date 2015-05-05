@@ -9,7 +9,7 @@ var Users = function (mainDb, models) {
     var SaasSchema = mongoose.Schemas['Saas'];
     var Saas = mainDb.model('Saas', SaasSchema);
 
-    function getAllUserWithProfile (req, id, response) {
+    function getAllUserWithProfile(req, id, response) {
         var res = {};
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({profile: id}, {_id: 0, login: 1});
         query.exec(function (err, result) {
@@ -27,7 +27,7 @@ var Users = function (mainDb, models) {
         });
     };
 
-    function getTotalCount (req, response) {
+    function getTotalCount(req, response) {
         var res = {};
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});
         query.exec(function (err, result) {
@@ -41,26 +41,25 @@ var Users = function (mainDb, models) {
         });
     };
 
-    function createUser (req, data, result) {
+    function createUser(req, data, result) {
         try {
             var shaSum = crypto.createHash('sha256');
             var res = {};
+            var query = {$or: [{login: data.login}, {email: data.email}]};
+
             if (!data) {
                 logWriter.log('Person.create Incorrect Incoming Data');
                 result.send(400, {error: 'User.create Incorrect Incoming Data'});
             } else {
-                models.get(req.session.lastDb, 'Users', userSchema).find({login: data.login}, function (error, doc) {
+                models.get(req.session.lastDb, 'Users', userSchema).find(query, function (error, doc) {
                     try {
                         if (error) {
                             logWriter.log('User.js create User.find' + error);
                             result.send(500, {error: 'User.create find error'});
                         }
                         if (doc.length > 0) {
-                            if (doc[0].login === data.login) {
-                                result.send(400, {error: "An user with the same Login already exists"});
-                            }
-                        }
-                        else if (doc.length === 0) {
+                            result.send(400, {error: RESPONSES.USER_ALREADY_EXISTS});
+                        } else if (doc.length === 0) {
                             savetoBd(data);
                         }
                     }
@@ -71,11 +70,11 @@ var Users = function (mainDb, models) {
                     }
                 });
             }
-            function savetoBd (data) {
+            function savetoBd(data) {
                 try {
                     Saas.findOne({'users.user': data.email/*, DBname: req.session.lastDb*/}, function (err, saasDbUser) {
                         if (err) {
-                            new Error (err);
+                            new Error(err);
                         }
                         if (saasDbUser && saasDbUser._id) {
                             new Error('email already used');
@@ -135,7 +134,7 @@ var Users = function (mainDb, models) {
         }
     }
 
-    function login (req, res, next) {
+    function login(req, res, next) {
         var data = req.body;
         var SaasSchema = mongoose.Schemas['Saas'];
         var Saas = mainDb.model('Saas', SaasSchema);
@@ -194,7 +193,7 @@ var Users = function (mainDb, models) {
                         saasDb = SaasDb.DBname;
                         req.session.lastDb = saasDb;
 
-                        if(dbsObject[saasDb]){
+                        if (dbsObject[saasDb]) {
 
                             return loginization(req, res, next, data, saasDb);
                         }
@@ -202,7 +201,7 @@ var Users = function (mainDb, models) {
                         dbObject = mongoose.createConnection(SaasDb.url, saasDb);
 
                         dbObject.on('error', console.error.bind(console, 'connection error:'));
-                        dbObject.once('open', function callback () {
+                        dbObject.once('open', function callback() {
                             console.log("Connection to " + saasDb.DBname + " is success");
 
                             dbsObject[saasDb] = dbObject;
@@ -225,7 +224,7 @@ var Users = function (mainDb, models) {
         }
     }
 
-    function getUsers (req, response, data) {
+    function getUsers(req, response, data) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});
@@ -245,7 +244,7 @@ var Users = function (mainDb, models) {
         });
     }
 
-    function getUsersForDd (req, response) {
+    function getUsersForDd(req, response) {
         var res = {};
         var data = {};
         for (var i in req.query) {
@@ -269,7 +268,7 @@ var Users = function (mainDb, models) {
         });
     }
 
-    function getUserById (req, id, response) {
+    function getUserById(req, id, response) {
         var query = models.get(req.session.lastDb, 'Users', userSchema).findById(id);
         query.populate('profile');
         query.populate('RelatedEmployee', 'imageSrc name');
@@ -284,7 +283,7 @@ var Users = function (mainDb, models) {
         });
     }
 
-    function getFilter (req, response) {
+    function getFilter(req, response) {
         var res = {};
         res['data'] = [];
         var data = {};
@@ -310,7 +309,7 @@ var Users = function (mainDb, models) {
         });
     }
 
-    function updateUser (req, _id, data, res, options) {
+    function updateUser(req, _id, data, res, options) {
         try {
             if (options && options.changePass) {
 
@@ -336,7 +335,7 @@ var Users = function (mainDb, models) {
                     }
                 });
             } else updateUser();
-            function updateUser () {
+            function updateUser() {
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
                     if (err) {
                         logWriter.log("User.js update profile.update" + err);
@@ -357,7 +356,7 @@ var Users = function (mainDb, models) {
         }
     }
 
-    function removeUser (req, _id, res) {
+    function removeUser(req, _id, res) {
         if (req.session.uId == _id) {
             res.send(400, {error: 'You cannot delete current user'});
         }
