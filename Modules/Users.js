@@ -1,13 +1,14 @@
 // JavaScript source code
 var Users = function (mainDb, models) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas['User'];
     var dbsObject = mainDb.dbsObject;
     var RESPONSES = require('../constants/responses');
     var SaasSchema = mongoose.Schemas['Saas'];
     var Saas = mainDb.model('Saas', SaasSchema);
+    var async = require('async');
 
     function getAllUserWithProfile(req, id, response) {
         var res = {};
@@ -310,50 +311,94 @@ var Users = function (mainDb, models) {
     }
 
     function updateUser(req, _id, data, res, options) {
-        try {
-            if (options && options.changePass) {
+        var shaSum;
+        var _oldPass;
+        var needUpdateSaas;
+        var pass;
 
-                var shaSum = crypto.createHash('sha256');
-                shaSum.update(data.pass);
-                data.pass = shaSum.digest('hex');
-                models.get(req.session.lastDb, 'Users', userSchema).findById(_id, function (err, result) {
+        function findOldUser(callback) {
+            models.get(req.session.lastDb, 'Users', userSchema).findById(_id, function (err, result) {
 
-                    if (err) {
-                        logWriter.log("User.js update profile.update" + err);
-                        res.send(500, {error: 'User.update BD error'});
-                    } else {
-                        var shaSum = crypto.createHash('sha256');
+                if (err) {
+                    callback(err);
+                } else {
+                    if (options && options.changePass) {
+                        needUpdateSaas = true;
+
+                        shaSum = crypto.createHash('sha256');
+
+                        shaSum.update(data.pass);
+                        data.pass = shaSum.digest('hex');
+
+                        shaSum = crypto.createHash('sha256');
                         shaSum.update(data.oldpass);
-                        var _oldPass = shaSum.digest('hex');
-                        if (result.pass == _oldPass) {
+                        _oldPass = shaSum.digest('hex');
+
+                        if (result.pass === _oldPass) {
                             delete data.oldpass;
-                            updateUser();
+                            pass = data.pass;
+
+                            callback(null, result);
                         } else {
-                            logWriter.log("User.js update Incorect Old Pass");
-                            res.send(500, {error: 'Incorect Old Pass'});
+                            callback('Incorrect Old Pass');
                         }
+                    } else {
+                        if (data.email && data.email !== result.email) {
+                            needUpdateSaas = true;
+                        }
+
+                        callback(null, result);
                     }
-                });
-            } else updateUser();
-            function updateUser() {
+                }
+            });
+        };
+
+        function updateUser(oldUser, waterFallCallback) {
+            var logout;
+            var paralelTasks = [];
+
+            function updateMainUser(callback) {
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
                     if (err) {
-                        logWriter.log("User.js update profile.update" + err);
-                        res.send(500, {error: 'User.update DB error'});
+                        callback(err);
                     } else {
                         req.session.kanbanSettings = result.kanbanSettings;
-                        if (data.profile && (result._id == req.session.uId))
-                            res.send(200, {success: 'User updated success', logout: true});
-                        else
-                            res.send(200, {success: 'User updated success'});
+                        if (data.profile && (result._id === req.session.uId)) {
+                            logout = true;
+                        }
+                        callback();
                     }
                 });
             }
+
+            function updateSaas(callback) {
+                var updateObject = {'users.$.user': data.email || oldUser.email};
+
+                if (pass) {
+                    updateObject['users.$.pass'] = pass;
+                }
+
+                Saas.findOneAndUpdate({'users.user': oldUser.email}, {
+                    $set: updateObject
+                }, callback);
+            }
+
+            paralelTasks.push(updateMainUser);
+
+            if (needUpdateSaas) {
+                paralelTasks.push(updateSaas);
+            }
+
+            async.parallel(paralelTasks, waterFallCallback);
         }
-        catch (exception) {
-            logWriter.log("Profile.js update " + exception);
-            res.send(500, {error: 'User.update BD error'});
-        }
+
+        async.waterfall([findOldUser, updateUser], function (err, result) {
+            if (err) {
+                logWriter.log("User.js update " + err);
+                return res.send(500, {error: 'User.update DB error'});
+            }
+            res.send(200, {success: 'User updated success'});
+        });
     }
 
     function removeUser(req, _id, res) {

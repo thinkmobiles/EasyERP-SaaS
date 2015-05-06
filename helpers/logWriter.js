@@ -6,7 +6,7 @@ var logWriter = function () {
 
     function erfunc(destination, errorString) {
         var _dest = 'log.txt';
-        var _error = errorString;
+        var _error = errorString || destination;
         fs.open(_dest, "a", 0644, function (err, file_handle) {
             if (!err) {
                 var date = new Date();
@@ -29,5 +29,5 @@ var logWriter = function () {
     return {
         log: erfunc
     }
-}
+};
 module.exports = logWriter;

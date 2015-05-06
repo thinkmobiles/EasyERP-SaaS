@@ -5,7 +5,7 @@ define(
             intNumberRegExp = /[0-9]+/,
             nameRegExp = /^[a-zA-Z]+[a-zA-Z-_\s]+$/,
             groupsNameRegExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/,
-            loginRegExp = /[\w\.@]{6,100}$/,
+            loginRegExp = /[\w\.@]{5,100}$/,
             passRegExp = /^[\w\.@]{3,100}$/,
             skypeRegExp = /^[\w\._@]{6,100}$/,
             workflowRegExp = /^[a-zA-Z0-9\s]{2,100}$/,
@@ -17,7 +17,7 @@ define(
             emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             loggedRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/;
         var MIN_LENGTH = 2,
-            LOGIN_MIN_LENGTH = 6,
+            LOGIN_MIN_LENGTH = 5,
             WORKFLOW_MIN_LENGTH = 3;
 
         var validateEmail = function (validatedString) {
@@ -26,66 +26,66 @@ define(
 
         var validateLogin = function (validatedString) {
             return loginRegExp.test(validatedString);
-        }
+        };
 
         var validateSkype = function (validatedString) {
             return skypeRegExp.test(validatedString);
-        }
+        };
 
         var validateZip = function (validatedString) {
             return zipRegExp.test(validatedString);
-        }
+        };
 
         var requiredFieldLength = function (validatedString) {
             return validatedString.length >= MIN_LENGTH;
-        }
+        };
 
         var validatePhone = function (validatedString) {
             return phoneRegExp.test(validatedString);
-        }
+        };
 
         var validateName = function (validatedString) {
             return nameRegExp.test(validatedString);
-        }
+        };
 
         var validateGroupsName = function (validatedString) {
             return groupsNameRegExp.test(validatedString);
-        }
+        };
         var validateWorkflowName = function (validatedString) {
             return workflowRegExp.test(validatedString);
-        }
+        };
 
         var validatePass = function (validatedString) {
             return passRegExp.test(validatedString);
-        }
+        };
 
         var validateCountryName = function (validatedString) {
             return countryRegExp.test(validatedString);
-        }
+        };
 
         var validateStreet = function (validatedString) {
             return streetRegExp.test(validatedString);
-        }
+        };
 
         var validateLoggedValue = function (validatedString) {
             return loggedRegExp.test(validatedString);
-        }
+        };
 
         var validateNumber = function (validatedString) {
             return intNumberRegExp.test(validatedString);
-        }
+        };
 
         var validateMoneyAmount = function (validatedString) {
             return moneyAmountRegExp.test(validatedString);
-        }
+        };
 
         var validDate = function (validatedString) {
             return new Date(validatedString).getMonth() ? true : false;
-        }
+        };
 
         var hasInvalidChars = function (validatedString) {
             return invalidCharsRegExp.test(validatedString);
-        }
+        };
 
         var errorMessages = {
             invalidNameMsg: "field value is incorrect. It should start with letter or number",
@@ -104,7 +104,7 @@ define(
             invalidPhoneMsg: "field should contain only numbers and '+ - ( )' signs",
             invalidZipMsg: "field should contain only letters, numbers and '-' sing",
             passwordsNotMatchMsg: "Password and confirm password field do not match"
-        }
+        };
 
 
         var checkNameField = function (errorArray, required, fieldValue, fieldName) {
@@ -131,7 +131,7 @@ define(
                     if (!validateName(fieldValue)) errorArray.push([fieldName, errorMessages.invalidNameMsg].join(' '));
                 }
             }
-        }
+        };
 
         var checkLogedField = function (errorArray, required, fieldValue, fieldName) {
             if (required) {
@@ -157,7 +157,7 @@ define(
                     if (!validateLoggedValue(fieldValue)) errorArray.push([fieldName, errorMessages.invalidNameMsg].join(' '));
                 }
             }
-        }
+        };
 
         var checkNumberField = function (errorArray, required, fieldValue, fieldName) {
             if (required) {
@@ -175,7 +175,7 @@ define(
                     if (!validateNumber(fieldValue)) errorArray.push([fieldName, errorMessages.notNumberMsg].join(' '));
                 }
             }
-        }
+        };
 
 
         var checkGroupsNameField = function (errorArray, required, fieldValue, fieldName) {
@@ -202,7 +202,7 @@ define(
                     if (!validateGroupsName(fieldValue)) errorArray.push([fieldName, errorMessages.invalidNameMsg].join(' '));
                 }
             }
-        }
+        };
 
         var checkLoginField = function (errorArray, required, fieldValue, fieldName) {
             if (required) {

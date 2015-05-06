@@ -1,12 +1,12 @@
 define(function () {
-    var getData = function(url, data, callback, context){
-        $.get(url, data, function(response){
+    var getData = function (url, data, callback, context) {
+        $.get(url, data, function (response) {
             if (context) {
                 callback(response, context);
             } else callback(response);
         });
     }
-    var postData = function(url, data, callback){
+    var postData = function (url, data, callback) {
         $.ajax({
             url: url,
             data: data,
@@ -20,8 +20,8 @@ define(function () {
         });
     }
     return {
-        getData:getData,
-        postData:postData
+        getData: getData,
+        postData: postData
     }
 
 });

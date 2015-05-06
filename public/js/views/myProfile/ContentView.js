@@ -1,11 +1,11 @@
 define([
-    "text!templates/myProfile/UsersPagesTemplate.html",
-    "text!templates/myProfile/ChangePassword.html",
-    'common',
-    "models/UsersModel",
-    'dataService',
-	"populate"
-],
+        "text!templates/myProfile/UsersPagesTemplate.html",
+        "text!templates/myProfile/ChangePassword.html",
+        'common',
+        "models/UsersModel",
+        'dataService',
+        "populate"
+    ],
     function (UsersPagesTemplate, ChangePassword, common, UsersModel, dataService, populate) {
         var ContentView = Backbone.View.extend({
             el: '#content-holder',
@@ -16,7 +16,7 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.render();
-				this.responseObj = {};
+                this.responseObj = {};
             },
             events: {
                 "click .changePassword": "changePassword",
@@ -27,35 +27,35 @@ define([
                 "click #RelatedEmployee li > a": "gotoEmployeesForm",
                 "click": "hideNewSelect",
                 "click .current-selected": "showNewSelect",
-				"click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
-         
+
             },
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
                 return false;
-                
+
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
             notHide: function () {
-				return false;
+                return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
             chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id",$(e.target).attr("id"));
+                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
 
             changePassword: function (e) {
                 e.preventDefault();
@@ -65,7 +65,7 @@ define([
                     dialogClass: "change-password-dialog",
                     width: "500px",
                     title: "Change Password",
- 					closeOnEscape: false,
+                    closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
                     buttons: {
@@ -88,9 +88,9 @@ define([
             },
 
             ChangePassword: function (self) {
-                    oldpass = $.trim(this.$el.find('#old_password').val());
-                    pass = $.trim(this.$el.find('#new_password').val());
-                    confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
+                var oldpass = $.trim(this.$el.find('#old_password').val());
+                var pass = $.trim(this.$el.find('#new_password').val());
+                var confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
 
                 dataService.getData('/currentUser', null, function (response, context) {
                     context.UsersModel = new UsersModel(response);
@@ -98,33 +98,35 @@ define([
 
                     var mid = 39;
                     context.UsersModel.save({
-                        oldpass: oldpass,
-                        pass: pass
-                    },
-	                {
-	                    headers: {
-	                        mid: mid
-	                    },
-	                    wait: true,
-	                    patch:true,
-	                    success: function (model) {
-	                        self.hideDialog();
-	                    },
-                        error: function (model,xhr) {
-                            self.errorNotification(xhr);
+                            oldpass: oldpass,
+                            pass: pass
                         },
-	                    editMode: false,
-	                    confirmPass:confirmPass
-	                });
+                        {
+                            headers: {
+                                mid: mid
+                            },
+                            wait: true,
+                            patch: true,
+                            success: function (model) {
+                                self.hideDialog();
+                            },
+                            error: function (model, xhr) {
+                                self.errorNotification(xhr);
+                            },
+                            editMode: false,
+                            confirmPass: confirmPass
+                        });
                 }, this);
 
             },
 
             save: function (e) {
                 e.preventDefault();
+
                 var email = $.trim($("#email").val());
                 var login = $.trim($("#login").val());
                 var RelatedEmployee = $("input[type='radio']:checked").attr("data-id");
+
                 dataService.getData('/currentUser', null, function (response, context) {
 
                     context.UsersModel = new UsersModel(response);
@@ -132,35 +134,35 @@ define([
                     var self = this;
                     var mid = 39;
                     context.UsersModel.save({
-                        imageSrc: imageSrc,
-                        email: email,
-                        login: login,
-                        RelatedEmployee: RelatedEmployee
-                    },
-	                {
-	                    headers: {
-	                        mid: mid
-	                    },
-	                    patch:true,
-	                    wait: true,
-	                    success: function () {
-	                        Backbone.history.fragment = "";
-	                        Backbone.history.navigate("easyErp/myProfile", { trigger: true });
-	                    },
-                        error: function (model, xhr) {
-                            self.errorNotification(xhr);
+                            imageSrc: imageSrc,
+                            email: email,
+                            login: login,
+                            RelatedEmployee: RelatedEmployee
                         },
-	                    editMode: true
-	                });
+                        {
+                            headers: {
+                                mid: mid
+                            },
+                            patch: true,
+                            wait: true,
+                            success: function () {
+                                Backbone.history.fragment = "";
+                                Backbone.history.navigate("easyErp/myProfile", {trigger: true});
+                            },
+                            error: function (model, xhr) {
+                                self.errorNotification(xhr);
+                            },
+                            editMode: true
+                        });
                 }, this.render());
             },
 
             resetForm: function (e) {
                 e.preventDefault();
                 $(':input', '#createUserForm')
-            	 .not(':button, :submit, :reset, :hidden')
-            	 .val('')
-            	 .removeAttr('checked')
+                    .not(':button, :submit, :reset, :hidden')
+                    .val('')
+                    .removeAttr('checked')
             },
 
             showEdit: function () {
@@ -194,17 +196,17 @@ define([
                         var date = new Date();
                         var minutes = date.getTimezoneOffset();
                         if (minutes < 0)
-                            var timezone = ("UTC +" + (minutes / 60)*(-1));
+                            var timezone = ("UTC +" + (minutes / 60) * (-1));
                         else
-                            var timezone = ("UTC -" + (minutes / 60)*(-1));
+                            var timezone = ("UTC -" + (minutes / 60) * (-1));
                         var model = response;
                         context.$el.html(_.template(UsersPagesTemplate,
-	                            {
-	                                model: model,
-	                                RelatedEmployee: RelatedEmployee.data,
-	                                timezone: timezone
-	                            }));
-                        common.canvasDraw({ model: model }, this);
+                            {
+                                model: model,
+                                RelatedEmployee: RelatedEmployee.data,
+                                timezone: timezone
+                            }));
+                        common.canvasDraw({model: model}, this);
 
                         if (response.RelatedEmployee) {
                             $("input[type='radio'][value=" + response.RelatedEmployee._id + "]").attr("checked", true);
