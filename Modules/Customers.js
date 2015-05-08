@@ -4,6 +4,7 @@
     var objectId = mongoose.Types.ObjectId;
     var customerSchema = mongoose.Schemas['Customer'];
     var department = mongoose.Schemas['Department'];
+    var fs = require('fs');
 
     return {
 
@@ -19,7 +20,8 @@
             var optionsObject = {};
 
             switch (contentType) {
-                case ('Persons'): {
+                case ('Persons'):
+                {
                     optionsObject['type'] = 'Person';
 
                     if (data.filter && data.filter.letter) {
@@ -27,13 +29,15 @@
                     }
                 }
                     break;
-                case ('Companies'): {
+                case ('Companies'):
+                {
                     optionsObject['type'] = 'Company';
                     if (data.filter && data.filter.letter)
                         optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
                 }
                     break;
-                case ('ownCompanies'): {
+                case ('ownCompanies'):
+                {
                     optionsObject['type'] = 'Company';
                     optionsObject['isOwn'] = true;
                     if (data.letter)
@@ -67,25 +71,25 @@
                                                     $or: [
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.users': objectId(req.session.uId) }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.users': objectId(req.session.uId)}
                                                             ]
                                                         },
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.group': { $in: arrOfObjectId } }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.group': {$in: arrOfObjectId}}
                                                             ]
                                                         }
                                                     ]
                                                 },
                                                 {
                                                     $and: [
-                                                        { whoCanRW: 'owner' },
-                                                        { 'groups.owner': objectId(req.session.uId) }
+                                                        {whoCanRW: 'owner'},
+                                                        {'groups.owner': objectId(req.session.uId)}
                                                     ]
                                                 },
-                                                { whoCanRW: "everyOne" }
+                                                {whoCanRW: "everyOne"}
                                             ]
                                         }
                                     ]
@@ -105,14 +109,14 @@
                                     response.send(res);
                                 } else {
                                     logWriter.log("Customers.js getTotalCount " + err);
-                                    response.send(500, { error: 'Server Eroor' });
+                                    response.send(500, {error: 'Server Eroor'});
                                 }
                             }
                         );
 
                     } else {
                         logWriter.log("Customers.js getTotalCount " + err);
-                        response.send(500, { error: 'Server Eroor' });
+                        response.send(500, {error: 'Server Eroor'});
                     }
                 });
         },
@@ -121,7 +125,7 @@
             try {
                 if (!data) {
                     logWriter.log('Person.create Incorrect Incoming Data');
-                    res.send(400, { error: 'Person.create Incorrect Incoming Data' });
+                    res.send(400, {error: 'Person.create Incorrect Incoming Data'});
                     return;
                 } else {
                     savetoBd(data);
@@ -262,34 +266,37 @@
                         _customer.save(function (err, result) {
                             if (err) {
                                 logWriter.log("Person.js create savetoBd _customer.save " + err);
-                                res.send(500, { error: 'Person.save BD error' });
+                                res.send(500, {error: 'Person.save BD error'});
                             } else {
-                                
-                                res.send(201, { success: 'A new Person crate success', id: result._id });
+
+                                res.send(201, {success: 'A new Person crate success', id: result._id});
                             }
                         });
 
                     }
                     catch (error) {
                         logWriter.log("Person.js create savetoBd" + error);
-                        res.send(500, { error: 'Person.save  error' });
+                        res.send(500, {error: 'Person.save  error'});
                     }
                 }
             }
             catch (Exception) {
                 logWriter.log("Person.js  " + Exception);
-                res.send(500, { error: 'Person.save  error' });
+                res.send(500, {error: 'Person.save  error'});
             }
         },
 
         getForDd: function (req, response) {
             var res = {};
             res['data'] = [];
-            var query = models.get(req.session.lastDb, "Customers", customerSchema).find({ 'relatedUser.id': { $ne: '' } }, { _id: 1, name: 1 });
-            query.sort({ name: 1 });
+            var query = models.get(req.session.lastDb, "Customers", customerSchema).find({'relatedUser.id': {$ne: ''}}, {
+                _id: 1,
+                name: 1
+            });
+            query.sort({name: 1});
             query.exec(function (err, customers) {
                 if (err) {
-                    response.send(500, { error: "Can't find customer" });
+                    response.send(500, {error: "Can't find customer"});
                     logWriter.log("customer.js geForDd customer.find " + err);
                 } else {
                     res['data'] = customers;
@@ -326,34 +333,34 @@
                                 $match: {
                                     $and: [
                                         optionsObject,
-										{
-										    company: objectId(data.companyId)
-										},
+                                        {
+                                            company: objectId(data.companyId)
+                                        },
                                         {
                                             $or: [
                                                 {
                                                     $or: [
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.users': objectId(req.session.uId) }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.users': objectId(req.session.uId)}
                                                             ]
                                                         },
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.group': { $in: arrOfObjectId } }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.group': {$in: arrOfObjectId}}
                                                             ]
                                                         }
                                                     ]
                                                 },
                                                 {
                                                     $and: [
-                                                        { whoCanRW: 'owner' },
-                                                        { 'groups.owner': objectId(req.session.uId) }
+                                                        {whoCanRW: 'owner'},
+                                                        {'groups.owner': objectId(req.session.uId)}
                                                     ]
                                                 },
-                                                { whoCanRW: "everyOne" }
+                                                {whoCanRW: "everyOne"}
                                             ]
                                         }
                                     ]
@@ -385,7 +392,7 @@
                                         query.select("_id name email phones.mobile").
                                             skip((data.page - 1) * data.count).
                                             limit(data.count).
-                                            sort({ "name.first": 1 }).
+                                            sort({"name.first": 1}).
                                             exec(function (error, _res) {
                                                 if (!error) {
                                                     res['data'] = _res;
@@ -410,17 +417,17 @@
         getPersonById: function (req, id, response) {
             var query = models.get(req.session.lastDb, "Customers", customerSchema).findById(id);
             query.populate('company', '_id name').
-                  populate('department', '_id departmentName').
-                  populate('createdBy.user').
-                  populate('editedBy.user').
-                  populate('groups.users').
-                  populate('groups.group').
-                  populate('groups.owner','_id login');
+                populate('department', '_id departmentName').
+                populate('createdBy.user').
+                populate('editedBy.user').
+                populate('groups.users').
+                populate('groups.group').
+                populate('groups.owner', '_id login');
 
             query.exec(function (err, result) {
                 if (err) {
                     logWriter.log("customer.js get customer.find " + err);
-                    response.send(500, { error: "Can't find customer" });
+                    response.send(500, {error: "Can't find customer"});
                 } else {
                     response.send(result);
                 }
@@ -430,18 +437,18 @@
         getCompanyById: function (req, id, response) {
             var query = models.get(req.session.lastDb, "Customers", customerSchema).findById(id);
             query.populate('department', '_id departmentName').
-            	  populate('salesPurchases.salesPerson', '_id name').
-            	  populate('salesPurchases.salesTeam', '_id departmentName').
-                  populate('createdBy.user').
-                  populate('editedBy.user').
-                  populate('groups.users').
-                  populate('groups.group').
-                  populate('groups.owner','_id login');
+                populate('salesPurchases.salesPerson', '_id name').
+                populate('salesPurchases.salesTeam', '_id departmentName').
+                populate('createdBy.user').
+                populate('editedBy.user').
+                populate('groups.users').
+                populate('groups.group').
+                populate('groups.owner', '_id login');
 
             query.exec(function (err, result) {
                 if (err) {
                     logWriter.log("customer.js get customer.find " + err);
-                    response.send(500, { error: "Can't find customer" });
+                    response.send(500, {error: "Can't find customer"});
                 } else {
                     response.send(result);
                 }
@@ -451,20 +458,20 @@
         getCompaniesForDd: function (req, response) {
             var res = {};
             res['data'] = [];
-            var query = models.get(req.session.lastDb, "Customers", customerSchema).find({ type: 'Company' });
+            var query = models.get(req.session.lastDb, "Customers", customerSchema).find({type: 'Company'});
             /*            query.populate('salesPurchases.salesPerson', '_id name').
-                              populate('salesPurchases.salesTeam', '_id departmentName').
-                              populate('createdBy.user').
-                              populate('editedBy.user').
-                              populate('groups.users').
-                              populate('groups.group');
-            */
+             populate('salesPurchases.salesTeam', '_id departmentName').
+             populate('createdBy.user').
+             populate('editedBy.user').
+             populate('groups.users').
+             populate('groups.group');
+             */
             query.select("_id name.first");
-            query.sort({ "name.first": 1 });
+            query.sort({"name.first": 1});
             query.exec(function (err, result) {
                 if (err) {
                     logWriter.log("customer.js get customer.find " + err);
-                    response.send(500, { error: "Can't find customer" });
+                    response.send(500, {error: "Can't find customer"});
                 } else {
                     res['data'] = result;
                     response.send(res);
@@ -484,17 +491,20 @@
             var res = {};
             var optionsObject = {};
             switch (contentType) {
-                case ('Persons'): {
+                case ('Persons'):
+                {
                     optionsObject['type'] = 'Person';
                     searchName = "$name.last";
                 }
                     break;
-                case ('Companies'): {
+                case ('Companies'):
+                {
                     optionsObject['type'] = 'Company';
                     searchName = "$name.first";
                 }
                     break;
-                case ('ownCompanies'): {
+                case ('ownCompanies'):
+                {
                     optionsObject['type'] = 'Company';
                     optionsObject['isOwn'] = true;
                     searchName = "$name.first";
@@ -514,7 +524,7 @@
                 function (err, deps) {
                     if (!err) {
                         var arrOfObjectId = deps.objectID();
-                        
+
                         models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
                             {
                                 $match: {
@@ -526,25 +536,25 @@
                                                     $or: [
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.users': objectId(req.session.uId) }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.users': objectId(req.session.uId)}
                                                             ]
                                                         },
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.group': { $in: arrOfObjectId } }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.group': {$in: arrOfObjectId}}
                                                             ]
                                                         }
                                                     ]
                                                 },
                                                 {
                                                     $and: [
-                                                        { whoCanRW: 'owner' },
-                                                        { 'groups.owner': objectId(req.session.uId) }
+                                                        {whoCanRW: 'owner'},
+                                                        {'groups.owner': objectId(req.session.uId)}
                                                     ]
                                                 },
-                                                { whoCanRW: "everyOne" }
+                                                {whoCanRW: "everyOne"}
                                             ]
                                         }
                                     ]
@@ -553,16 +563,16 @@
                             {
                                 $project: {
                                     _id: 1,
-                                    later: { $substr: [searchName, 0, 1] }
+                                    later: {$substr: [searchName, 0, 1]}
                                 }
                             },
                             {
-                                $group: { _id: "$later" }
+                                $group: {_id: "$later"}
                             },
                             function (err, result) {
                                 if (err) {
                                     logWriter.log("customer.js get person alphabet " + err);
-                                    response.send(500, { error: "Can't find customer" });
+                                    response.send(500, {error: "Can't find customer"});
                                 } else {
                                     res['data'] = result;
                                     response.send(res);
@@ -582,15 +592,18 @@
 
             var contentType = data.contentType;
             switch (contentType) {
-                case ('Persons'): {
+                case ('Persons'):
+                {
                     optionsObject['type'] = 'Person';
                 }
                     break;
-                case ('Companies'): {
+                case ('Companies'):
+                {
                     optionsObject['type'] = 'Company';
                 }
                     break;
-                case ('ownCompanies'): {
+                case ('ownCompanies'):
+                {
                     optionsObject['type'] = 'Company';
                     optionsObject['isOwn'] = true;
                 }
@@ -601,7 +614,7 @@
             query.where('_id').in(data.ids).
                 select('_id imageSrc').
                 exec(function (error, response) {
-                    res.send(200,{data:response});
+                    res.send(200, {data: response});
                 });
 
         },
@@ -617,19 +630,22 @@
             res['data'] = [];
             var optionsObject = {};
             switch (contentType) {
-                case ('Persons'): {
+                case ('Persons'):
+                {
                     optionsObject['type'] = 'Person';
                     if (data && data.filter && data.filter.letter)
-                             optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                        optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
                 }
                     break;
-                case ('Companies'): {
+                case ('Companies'):
+                {
                     optionsObject['type'] = 'Company';
                     if (data && data.filter && data.filter.letter)
-                             optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                        optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
                 }
                     break;
-                case ('ownCompanies'): {
+                case ('ownCompanies'):
+                {
                     optionsObject['type'] = 'Company';
                     optionsObject['isOwn'] = true;
                     if (data.letter)
@@ -651,7 +667,7 @@
                 function (err, deps) {
                     if (!err) {
                         var arrOfObjectId = deps.objectID();
-                        
+
                         models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
                             {
                                 $match: {
@@ -663,25 +679,25 @@
                                                     $or: [
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.users': objectId(req.session.uId) }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.users': objectId(req.session.uId)}
                                                             ]
                                                         },
                                                         {
                                                             $and: [
-                                                                { whoCanRW: 'group' },
-                                                                { 'groups.group': { $in: arrOfObjectId } }
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.group': {$in: arrOfObjectId}}
                                                             ]
                                                         }
                                                     ]
                                                 },
                                                 {
                                                     $and: [
-                                                        { whoCanRW: 'owner' },
-                                                        { 'groups.owner': objectId(req.session.uId) }
+                                                        {whoCanRW: 'owner'},
+                                                        {'groups.owner': objectId(req.session.uId)}
                                                     ]
                                                 },
-                                                { whoCanRW: "everyOne" }
+                                                {whoCanRW: "everyOne"}
                                             ]
                                         }
                                     ]
@@ -701,18 +717,20 @@
                                     switch (contentType) {
                                         case ('Persons'):
                                             switch (viewType) {
-                                                case ('list'): {
+                                                case ('list'):
+                                                {
                                                     if (data.sort) {
                                                         query.sort(data.sort);
-                                                    }else{
-														query.sort({"editedBy.date":-1});
-													}
+                                                    } else {
+                                                        query.sort({"editedBy.date": -1});
+                                                    }
                                                     query.select("_id createdBy editedBy address.country email name phones.phone").
                                                         populate('createdBy.user', 'login').
                                                         populate('editedBy.user', 'login');
                                                 }
                                                     break;
-                                                case ('thumbnails'): {
+                                                case ('thumbnails'):
+                                                {
                                                     query.select("_id name email company").
                                                         populate('company', '_id name').
                                                         populate('department', '_id departmentName').
@@ -725,20 +743,22 @@
                                             break;
                                         case ('Companies'):
                                             switch (viewType) {
-                                                case ('list'): {
-													if (data.sort) {
-														query.sort(data.sort);
-													}else{
-														query.sort({"editedBy.date":-1});
-													}
+                                                case ('list'):
+                                                {
+                                                    if (data.sort) {
+                                                        query.sort(data.sort);
+                                                    } else {
+                                                        query.sort({"editedBy.date": -1});
+                                                    }
                                                     query.select("_id editedBy createdBy salesPurchases name email phones.phone address.country").
                                                         populate('salesPurchases.salesPerson', '_id name').
-                                                         populate('salesPurchases.salesTeam', '_id departmentName').
+                                                        populate('salesPurchases.salesTeam', '_id departmentName').
                                                         populate('createdBy.user', 'login').
                                                         populate('editedBy.user', 'login');
                                                 }
                                                     break;
-                                                case ('thumbnails'): {
+                                                case ('thumbnails'):
+                                                {
                                                     query.select("_id name address").
                                                         populate('createdBy.user').
                                                         populate('editedBy.user');
@@ -749,14 +769,16 @@
                                             break;
                                         case ('ownCompanies'):
                                             switch (viewType) {
-                                                case ('list'): {
+                                                case ('list'):
+                                                {
                                                     query.populate('salesPurchases.salesPerson', '_id name').
                                                         populate('salesPurchases.salesTeam', '_id departmentName').
                                                         populate('createdBy.user').
                                                         populate('editedBy.user');
                                                 }
                                                     break;
-                                                case ('thumbnails'): {
+                                                case ('thumbnails'):
+                                                {
                                                     query.select("_id name").
                                                         populate('company', '_id name address').
                                                         populate('createdBy.user').
@@ -794,12 +816,12 @@
             res['data'] = [];
             var query = models.get(req.session.lastDb, "Customers", customerSchema).find();
             if (data && data.id)
-                query.where({ _id: objectId(data.id) });
-            query.sort({ "name.first": 1 });
+                query.where({_id: objectId(data.id)});
+            query.sort({"name.first": 1});
             query.exec(function (err, customers) {
                 if (err) {
                     logWriter.log("customer.js getCustomersForDd customer.find " + err);
-                    response.send(500, { error: "Can't find Customer" });
+                    response.send(500, {error: "Can't find Customer"});
                 } else {
                     res['data'] = customers;
                     response.send(res);
@@ -809,60 +831,60 @@
 
         update: function (req, _id, remove, data, res) {
             try {
-				delete data._id;
-				delete data.createdBy;
-				if (data.notes && data.notes.length != 0 && !remove) {
-					var obj = data.notes[data.notes.length - 1];
-					obj._id = mongoose.Types.ObjectId();
-					obj.date = new Date();
-					data.notes[data.notes.length - 1] = obj;
-				}
-				if (data.company && data.company._id) {
-					data.company = data.company._id;
-				}
-				if (data.department && data.department._id) {
-					data.department = data.department._id;
-				}
-				if (data.salesPurchases && data.salesPurchases.salesPerson && data.salesPurchases.salesPerson._id) {
-					data.salesPurchases.salesPerson = data.salesPurchases.salesPerson._id;
-				}
-				if (data.salesPurchases && data.salesPurchases.salesTeam && data.salesPurchases.salesTeam._id) {
-					data.salesPurchases.salesTeam = data.salesPurchases.salesTeam._id;
-				}
-				models.get(req.session.lastDb, "Customers", customerSchema).findByIdAndUpdate({ _id: _id }, data, function (err, customers) {
-					if (err) {
-						logWriter.log("Customer.js update customer.update " + err);
-						res.send(500, { error: "Can't update customer" });
-					} else {
-						res.send(200, customers);
-					}
-				});
+                delete data._id;
+                delete data.createdBy;
+                if (data.notes && data.notes.length != 0 && !remove) {
+                    var obj = data.notes[data.notes.length - 1];
+                    obj._id = mongoose.Types.ObjectId();
+                    obj.date = new Date();
+                    data.notes[data.notes.length - 1] = obj;
+                }
+                if (data.company && data.company._id) {
+                    data.company = data.company._id;
+                }
+                if (data.department && data.department._id) {
+                    data.department = data.department._id;
+                }
+                if (data.salesPurchases && data.salesPurchases.salesPerson && data.salesPurchases.salesPerson._id) {
+                    data.salesPurchases.salesPerson = data.salesPurchases.salesPerson._id;
+                }
+                if (data.salesPurchases && data.salesPurchases.salesTeam && data.salesPurchases.salesTeam._id) {
+                    data.salesPurchases.salesTeam = data.salesPurchases.salesTeam._id;
+                }
+                models.get(req.session.lastDb, "Customers", customerSchema).findByIdAndUpdate({_id: _id}, data, function (err, customers) {
+                    if (err) {
+                        logWriter.log("Customer.js update customer.update " + err);
+                        res.send(500, {error: "Can't update customer"});
+                    } else {
+                        res.send(200, customers);
+                    }
+                });
             }
             catch (Exception) {
                 logWriter.log("Customer.js update " + Exception);
-                res.send(500, { error: 'customer updated error' });
+                res.send(500, {error: 'customer updated error'});
             }
         },
 
-		updateOnlySelectedFields:function(req, _id, data, res) {
-			delete data._id;
+        updateOnlySelectedFields: function (req, _id, data, res) {
+            delete data._id;
             var fileName = data.fileName;
             delete data.fileName;
-			if (data.notes && data.notes.length != 0) {
-				var obj = data.notes[data.notes.length - 1];
+            if (data.notes && data.notes.length != 0) {
+                var obj = data.notes[data.notes.length - 1];
                 if (!obj._id)
-				    obj._id = mongoose.Types.ObjectId();
-				obj.date = new Date();
+                    obj._id = mongoose.Types.ObjectId();
+                obj.date = new Date();
                 if (!obj.author)
-				    obj.author = req.session.uName;
-				data.notes[data.notes.length - 1] = obj;
-			}
-			 
-			models.get(req.session.lastDb, 'Customers', customerSchema).findByIdAndUpdate({ _id: _id }, { $set: data }, function (err, result) {
-				if (err) {
-					logWriter.log("Customer.js update customer.update " + err);
-					res.send(500, { error: "Can't update Customer" });
-				} else {
+                    obj.author = req.session.uName;
+                data.notes[data.notes.length - 1] = obj;
+            }
+
+            models.get(req.session.lastDb, 'Customers', customerSchema).findByIdAndUpdate({_id: _id}, {$set: data}, function (err, result) {
+                if (err) {
+                    logWriter.log("Customer.js update customer.update " + err);
+                    res.send(500, {error: "Can't update Customer"});
+                } else {
                     if (fileName) {
                         var os = require("os");
                         var osType = (os.type().split('_')[0]);
@@ -873,7 +895,7 @@
                             {
                                 var newDirname = __dirname.replace("\\Modules", "");
                                 while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\","\/");
+                                    newDirname = newDirname.replace("\\", "\/");
                                 }
                                 path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
                                 dir = newDirname + "\/uploads\/" + _id;
@@ -883,34 +905,35 @@
                             {
                                 var newDirname = __dirname.replace("/Modules", "");
                                 while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\","\/");
+                                    newDirname = newDirname.replace("\\", "\/");
                                 }
                                 path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
                                 dir = newDirname + "\/uploads\/" + _id;
                             }
                         }
 
-                        logWriter.fs.unlink(path, function (err) {
-                            logWriter.fs.readdir(dir, function(err, files){
+                        fs.unlink(path, function (err) {
+                            fs.readdir(dir, function (err, files) {
                                 if (files.length === 0) {
-                                    logWriter.fs.rmdir(dir,function(){});
+                                    fs.rmdir(dir, function () {
+                                    });
                                 }
                             });
                         });
 
                     }
-				    res.send(200,{ success: 'Customer update', notes: result.notes } );
-				}
-			});
-		},
+                    res.send(200, {success: 'Customer update', notes: result.notes});
+                }
+            });
+        },
 
         remove: function (req, _id, res) {
-            models.get(req.session.lastDb, "Customers", customerSchema).remove({ _id: _id }, function (err, customer) {
+            models.get(req.session.lastDb, "Customers", customerSchema).remove({_id: _id}, function (err, customer) {
                 if (err) {
                     logWriter.log("Project.js remove project.remove " + err);
-                    res.send(500, { error: "Can't remove customer" });
+                    res.send(500, {error: "Can't remove customer"});
                 } else {
-                    res.send(200, { success: 'customer removed' });
+                    res.send(200, {success: 'customer removed'});
                 }
             });
         }
