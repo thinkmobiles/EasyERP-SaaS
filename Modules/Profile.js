@@ -1,6 +1,6 @@
 var Profile = function (models) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter');
+    var logWriter = require('../helpers/logWriter')();
     var users = mongoose.Schemas['User'];
     var ProfileSchema = mongoose.Schemas['Profile'];
 

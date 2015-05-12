@@ -1,6 +1,6 @@
 var Languages = function (models) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var LanguageSchema = mongoose.Schemas['language'];
 
     function getForDd(req, response) {

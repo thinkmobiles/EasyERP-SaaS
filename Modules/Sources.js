@@ -1,7 +1,7 @@
 ﻿var Source = function (models) {
     var mongoose = require('mongoose');
     var SourceSchema = mongoose.Schemas['source'];
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
 
     function getForDd(req, response) {
         var res = {};

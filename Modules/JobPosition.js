@@ -1,7 +1,7 @@
 var JobPosition = function (models) {
     var mongoose = require('mongoose');
     var objectId = mongoose.Types.ObjectId;
-    var logWriter = require('../helpers/logWriter');
+    var logWriter = require('../helpers/logWriter')();
     var employee = mongoose.Schemas['Employee'];
     var department = mongoose.Schemas['Department'];
 

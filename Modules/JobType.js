@@ -1,6 +1,6 @@
 ﻿var JobType = function (logWriter, mongoose, models) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var jobTypeSchema = mongoose.Schemas['Degree'];
 
     function getForDd(req, response) {

@@ -1,6 +1,6 @@
 ﻿var Nationality = function (models) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var nationalitySchema =  mongoose.Schemas['nationality'];
 
     function getForDd(req, response) {

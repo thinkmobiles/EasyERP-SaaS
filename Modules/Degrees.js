@@ -1,7 +1,7 @@
 var Degrees = function (models) {
     var mongoose = require('mongoose');
     var degreesSchema = mongoose.Schemas['Degree'];
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
 
     function create (data, res) {
         try {

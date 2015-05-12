@@ -1,6 +1,6 @@
 var Workflow = function (models, event) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var relatedStatusSchema = mongoose.Schemas['relatedStatus'];
     var workflowSchema = mongoose.Schemas['workflow'];
 

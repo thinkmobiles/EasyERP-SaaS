@@ -1,7 +1,7 @@
 // JavaScript source code
 var Employee = function (event, models) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var department = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var employeeSchema = mongoose.Schemas['Employee'];

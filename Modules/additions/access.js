@@ -2,6 +2,7 @@
     var mongoose = require('mongoose');
     var profile = mongoose.Schemas['Profile'];
     var user = mongoose.Schemas['Users'];
+    var logWriter = require('../../helpers/logWriter.js')();
 
     var getAccess = function (req, uId, mid, callback) { 
         models.get(req.session.lastDb, 'Users', user).findById(uId, function (err, user) {

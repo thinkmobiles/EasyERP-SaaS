@@ -1,6 +1,6 @@
 var Campaigns = function (models) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var campaignSchema = mongoose.Schemas['Campaign'];
 
     function getForDd (req, response) {

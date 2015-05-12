@@ -1,6 +1,6 @@
 var Opportunities = function (models, event) {
     var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
+    var logWriter = require('../helpers/logWriter.js')();
     var objectId = mongoose.Types.ObjectId;
     var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
     var departmentSchema = mongoose.Schemas['Department'];
