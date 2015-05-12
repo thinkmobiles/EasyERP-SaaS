@@ -912,9 +912,12 @@ var Opportunities = function (models, event) {
                             fs.unlink(path, function (err) {
                                 console.log(err);
                                 fs.readdir(dir, function (err, files) {
-                                    if (files.length === 0) {
+                                    if (files && files.length === 0) {
                                         fs.rmdir(dir, function () {
                                         });
+                                    };
+                                    if(err){
+                                        logWriter.log("Opportunities.js " + err.stack || err);
                                     }
                                 });
                             });

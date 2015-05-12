@@ -904,8 +904,12 @@ var Employee = function (event, models) {
                         fs.unlink(path, function (err) {
                             console.log(err);
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
-                                    fs.rmdir(dir, function () { });
+                                if (files && files.length === 0) {
+                                    fs.rmdir(dir, function () {
+                                    });
+                                };
+                                if(err){
+                                    logWriter.log("Employees.js " + err.stack || err);
                                 }
                             });
                         });

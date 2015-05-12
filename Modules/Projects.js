@@ -1231,8 +1231,12 @@ var Project = function (models, event) {
                     fs.unlink(path, function (err) {
                         console.log(err);
                         fs.readdir(dir, function (err, files) {
-                            if (files.length === 0) {
-                                fs.rmdir(dir, function () { });
+                            if (files && files.length === 0) {
+                                fs.rmdir(dir, function () {
+                                });
+                            };
+                            if(err){
+                                logWriter.log("Projects.js " + err.stack || err);
                             }
                         });
                     });
@@ -1336,8 +1340,12 @@ var Project = function (models, event) {
                         fs.unlink(path, function (err) {
                             console.log(err);
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
-                                    fs.rmdir(dir, function () { });
+                                if (files && files.length === 0) {
+                                    fs.rmdir(dir, function () {
+                                    });
+                                };
+                                if(err){
+                                    logWriter.log("Projects.js " + err.stack || err);
                                 }
                             });
                         });
