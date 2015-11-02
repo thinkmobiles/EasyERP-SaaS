@@ -98,6 +98,7 @@ var Saas = function (mainDb) {
     };
 
     this.register = function (req, res, next) {
+        var saas;
         var body = req.body;
         var shaSum = crypto.createHash('sha256');
         var subdomainObject = subdomainHelper(req);

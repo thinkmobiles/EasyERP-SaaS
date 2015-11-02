@@ -41,6 +41,8 @@ module.exports = function (mainDb) {
                 var dbConnection;
 
                 if (err) {
+                    console.error(err);
+
                     return callback(err);
                 }
 
