@@ -21,6 +21,8 @@ module.exports = function (mainDb) {
 
         Saas.findOne({'users.user': email}, function (err, saasDb) {
             if (err) {
+                console.error(err);
+
                 return callback(err);
             }
             if (saasDb && saasDb.id) {
