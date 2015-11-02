@@ -19,6 +19,10 @@ module.exports = function (mainDb) {
         var company = body.company;
         var shaSum = crypto.createHash('sha256');
 
+        console.log('--------- Body -------');
+        console.dir(body);
+        console.log('--------- Body End-------');
+
         Saas.findOne({'users.user': email}, function (err, saasDb) {
             if (err) {
                 console.error(err);
@@ -28,6 +32,7 @@ module.exports = function (mainDb) {
             if (saasDb && saasDb.id) {
                 err = new Error(RESPONSES.IS_ALREADY_USED);
                 err.status = 400;
+
                 return callback(err);
             }
 
@@ -102,6 +107,10 @@ module.exports = function (mainDb) {
                         email: email,
                         pass: password
                     }, function (err, _user) {
+                        console.log('--------- _user -------');
+                        console.dir(_user);
+                        console.log('--------- _user End-------');
+
                         if (err) {
                             console.error(err);
 
@@ -151,6 +160,8 @@ module.exports = function (mainDb) {
                     });
                 });
                 dbConnection.on('error', function (error) {
+                    console.error(error);
+
                     callback(error);
                 });
             });
