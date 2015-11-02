@@ -117,6 +117,9 @@ var Saas = function (mainDb) {
 
         dbRegistrator(req, subdomainObject.accountName, body, function (err, connection) {
             if (err) {
+                console.log('----- DbRegistratorCB -----');
+                console.error(err);
+
                 return next(err);
             }
 

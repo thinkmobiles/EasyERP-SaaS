@@ -84,7 +84,15 @@ module.exports = function (mainDb) {
 
                         var customer = new CustomerModel(saveObject);
 
-                        customer.save(callback);
+                        customer.save(function(err, savedCustomer){
+                            if(err){
+                                console.error(err);
+
+                                return callback(err);
+                            }
+
+                            callback(null, savedCustomer);
+                        });
                     };
 
                     UserModel.findOneAndUpdate({login: 'superAdmin'}, {
@@ -93,6 +101,8 @@ module.exports = function (mainDb) {
                         pass: password
                     }, function (err, _user) {
                         if (err) {
+                            console.error(err);
+
                             callback(err);
                         } else if (_user && _user._id) {
                             customerCreator({
