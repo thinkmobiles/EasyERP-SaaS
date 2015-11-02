@@ -91,6 +91,8 @@ module.exports = function (mainDb) {
                                 return callback(err);
                             }
 
+                            //ToDo remove this;
+                            console.dir(savedCustomer);
                             callback(null, savedCustomer);
                         });
                     };
